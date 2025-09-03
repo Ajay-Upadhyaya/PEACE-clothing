@@ -55,11 +55,11 @@ const HomePage = ({ onShopNowClick, onOurStoryClick }) => (
 
     <section className="bg-gray-100 py-16 sm:py-24 lg:py-32">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between">
-        <div className="md:w-1/2">
+        <div className="md:w-1/2 mb-3">
           <img
             src="friends.png"
             alt="Three friends enjoying their time."
-            className="w-full h-96 rounded-lg object-cover shadow-xl bg-cover "
+            className="w-full h-96 rounded-lg object-cover shadow-lg bg-cover "
           />
         </div>
         <div className="max-w-xl md:w-1/2 text-center md:text-left mb-8 md:mb-0">
