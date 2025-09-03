@@ -17,7 +17,7 @@ import {
 // Helper components for each page to keep the main return clean.
 
 // Home Page content
-const HomePage = ({ onShopNowClick }) => (
+const HomePage = ({ onShopNowClick, onOurStoryClick }) => (
   <>
     {/* Hero Section */}
     <section className="bg-gray-100 py-16 sm:py-24 lg:py-32">
@@ -31,19 +31,50 @@ const HomePage = ({ onShopNowClick }) => (
             clothing. <span className="font-bold ">WEAR YOUR PEACE </span>.
           </p>
 
-          <button
-            onClick={onShopNowClick}
-            className="mt-8 inline-block px-8 py-3 rounded-full bg-gray-900 text-white font-medium text-lg hover:bg-gray-700 transition duration-300 transform hover:scale-105"
-          >
-            Shop Now
-          </button>
+          <div className="mt-8 flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+            <button
+              onClick={onShopNowClick}
+              className="inline-block px-8 py-3 rounded-full bg-gray-900 text-white font-medium text-lg hover:bg-gray-700 transition duration-300 transform hover:scale-105"
+            >
+              Shop Now
+            </button>
+          </div>
         </div>
         <div className="md:w-1/2">
           <img
             src="herosection.png"
-            alt="A stylish model wearing PEACE clothing."
+            alt="PEACE hoodie."
             className="w-full h-96 rounded-lg object-cover shadow-xl bg-cover "
           />
+        </div>
+      </div>
+    </section>
+
+    <section className="bg-gray-100 py-16 sm:py-24 lg:py-32">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between">
+        <div className="md:w-1/2">
+          <img
+            src="friends.png"
+            alt="Three friends enjoying their time."
+            className="w-full h-96 rounded-lg object-cover shadow-xl bg-cover "
+          />
+        </div>
+        <div className="max-w-xl md:w-1/2 text-center md:text-left mb-8 md:mb-0">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight">
+            A Brand Born from Quiet Strength
+          </h1>
+          <p className="mt-4 sm:mt-6 text-lg sm:text-xl text-gray-600">
+            Elevated basics that reflect inner peace and outer style.
+          </p>
+
+          <div className="mt-8 flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+            <button
+              onClick={onOurStoryClick}
+              className="inline-block px-8 py-3 rounded-full border-2 border-gray-900 text-gray-900 font-medium text-lg hover:bg-gray-200 transition duration-300 transform hover:scale-105"
+            >
+              Our Story
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -51,41 +82,76 @@ const HomePage = ({ onShopNowClick }) => (
 );
 
 // Shop Page content
-const ShopPage = ({ products, onAddToCart }) => (
-  <section id="shop" className="py-16 sm:py-24">
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-gray-900">
-        Our Latest Collection
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition duration-300"
-          >
-            <img
-              src={product.image}
-              alt={product.alt}
-              className="w-full h-auto object-cover"
-            />
-            <div className="p-4 text-center">
-              <h3 className="text-lg font-semibold text-gray-800">
-                {product.name}
-              </h3>
-              <p className="mt-1 text-gray-600">Rs.{product.price}</p>
-              <button
-                onClick={() => onAddToCart(product)}
-                className="mt-4 w-full py-2 rounded-full bg-gray-900 text-white font-medium text-sm hover:bg-gray-700 transition duration-300"
-              >
-                Add to Cart
-              </button>
+const ShopPage = ({ products, onAddToCart }) => {
+  const [selectedSizes, setSelectedSizes] = useState({});
+
+  const handleSizeChange = (productId, size) => {
+    setSelectedSizes((prevSizes) => ({
+      ...prevSizes,
+      [productId]: size,
+    }));
+  };
+
+  const handleAddToCartWithCheck = (product) => {
+    if (selectedSizes[product.id]) {
+      onAddToCart(product, selectedSizes[product.id]);
+    } else {
+      alert("Please select a size before adding to cart.");
+    }
+  };
+
+  return (
+    <section id="shop" className="py-16 sm:py-24">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-gray-900">
+          Our Latest Collection
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {products.map((product) => (
+            <div
+              key={product.id}
+              className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition duration-300"
+            >
+              <img
+                src={product.image}
+                alt={product.alt}
+                className="w-full h-auto object-cover"
+              />
+              <div className="p-4 text-center">
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {product.name}
+                </h3>
+                <p className="mt-1 text-gray-600">Rs.{product.price}</p>
+                {/* Size Selection */}
+                <div className="mt-4 flex justify-center space-x-2">
+                  {product.sizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => handleSizeChange(product.id, size)}
+                      className={`w-8 h-8 rounded-full border border-gray-300 text-sm font-medium transition duration-300 ${
+                        selectedSizes[product.id] === size
+                          ? "bg-gray-900 text-white"
+                          : "bg-white text-gray-900 hover:bg-gray-100"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => handleAddToCartWithCheck(product)}
+                  className="mt-4 w-full py-2 rounded-full bg-gray-900 text-white font-medium text-sm hover:bg-gray-700 transition duration-300"
+                >
+                  Add to Cart
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 // About Page content
 const AboutPage = () => (
@@ -95,14 +161,18 @@ const AboutPage = () => (
         Our Mission
       </h2>
       <p className="text-lg text-gray-600 leading-relaxed mb-8">
-        At PEACE, we believe that fashion should be a force for good. Our
-        clothing is designed with intentionality, crafted from sustainable
-        materials, and produced in ethical conditions. We're more than just a
-        clothing brand; we're a movement dedicated to style, sustainability, and
-        harmony. Join us on our journey to make a positive impact, one garment
-        at a time.
+        At PEACE, we believe that clothing is more than just what you wear —
+        it's a reflection of who you are. Born from the idea that peace should
+        be both felt and seen, our brand blends minimal design with intentional
+        living. Each piece is thoughtfully created to inspire calm, confidence,
+        and authenticity in everyday life. We champion slow fashion, sustainable
+        choices, and a community rooted in kindness. When you wear PEACE, you're
+        not just making a style statement — you're choosing a lifestyle grounded
+        in purpose and presence.
       </p>
-      <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Values</h3>
+      <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+        Our Values
+      </h3>
       <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-8 text-gray-700">
         <div className="p-6 bg-white rounded-lg shadow-md">
           <p className="font-semibold text-xl">Sustainability</p>
@@ -201,7 +271,7 @@ const CheckoutPage = ({
   const subtotal = cart
     .reduce((acc, item) => acc + parseFloat(item.price) * item.quantity, 0)
     .toFixed(2);
-  const tax = (subtotal * 0.08).toFixed(2); // Example 8% tax
+  const tax = (subtotal * 0.13).toFixed(2); // Example 13% tax
   const total = (parseFloat(subtotal) + parseFloat(tax)).toFixed(2);
 
   return (
@@ -219,7 +289,7 @@ const CheckoutPage = ({
             <div className="md:col-span-2 space-y-4">
               {cart.map((item) => (
                 <div
-                  key={item.id}
+                  key={`${item.id}-${item.size}`}
                   className="bg-white p-4 rounded-lg shadow-sm flex items-center space-x-4"
                 >
                   <img
@@ -229,25 +299,26 @@ const CheckoutPage = ({
                   />
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg">{item.name}</h3>
-                    <p className="text-gray-600">${item.price}</p>
+                    <p className="text-gray-600">Size: {item.size}</p>
+                    <p className="text-gray-600">Rs.{item.price}</p>
                   </div>
                   <div className="flex items-center space-x-2">
                     <button
-                      onClick={() => onUpdateQuantity(item.id, -1)}
+                      onClick={() => onUpdateQuantity(item.id, item.size, -1)}
                       className="p-1 rounded-full text-gray-600 hover:bg-gray-200 transition"
                     >
                       <ChevronDown size={18} />
                     </button>
                     <span className="font-medium">{item.quantity}</span>
                     <button
-                      onClick={() => onUpdateQuantity(item.id, 1)}
+                      onClick={() => onUpdateQuantity(item.id, item.size, 1)}
                       className="p-1 rounded-full text-gray-600 hover:bg-gray-200 transition"
                     >
                       <ChevronUp size={18} />
                     </button>
                   </div>
                   <button
-                    onClick={() => onRemoveFromCart(item.id)}
+                    onClick={() => onRemoveFromCart(item.id, item.size)}
                     className="ml-4 text-sm text-red-500 hover:text-red-700 transition"
                   >
                     Remove
@@ -290,7 +361,7 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState("home");
   const [cart, setCart] = useState([]);
 
-  // Mock product data
+  // Mock product data with sizes
   const products = [
     {
       id: 1,
@@ -298,6 +369,7 @@ const App = () => {
       price: "3000.00",
       image: "hoodie.png",
       alt: "A dark gray hoodie with a small logo on the chest.",
+      sizes: ["S", "M", "L"],
     },
     {
       id: 2,
@@ -305,6 +377,7 @@ const App = () => {
       price: "1400.00",
       image: "tshirt.png",
       alt: "A light gray t-shirt with a minimalist peace symbol.",
+      sizes: ["S", "M", "L"],
     },
     {
       id: 3,
@@ -312,6 +385,7 @@ const App = () => {
       price: "2000.00",
       image: "pants.png",
       alt: "A pair of dark joggers with subtle branding.",
+      sizes: ["S", "M", "L"],
     },
     {
       id: 4,
@@ -319,6 +393,7 @@ const App = () => {
       price: "700.00",
       image: "cap.png",
       alt: "A black baseball cap with an embroidered logo.",
+      sizes: ["S", "M", "L"],
     },
     {
       id: 5,
@@ -326,6 +401,7 @@ const App = () => {
       price: "2000.00",
       image: "sweater.png",
       alt: "A vintage-style knit sweater.",
+      sizes: ["S", "M", "L"],
     },
     {
       id: 6,
@@ -333,6 +409,7 @@ const App = () => {
       price: "1200.00",
       image: "shorts.png",
       alt: "Comfortable cotton shorts.",
+      sizes: ["S", "M", "L"],
     },
   ];
 
@@ -345,33 +422,41 @@ const App = () => {
     setIsMenuOpen(false); // Close mobile menu after navigating
   };
 
-  const handleAddToCart = (product) => {
+  const handleAddToCart = (product, size) => {
     setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === product.id);
+      const existingItem = prevCart.find(
+        (item) => item.id === product.id && item.size === size
+      );
       if (existingItem) {
+        alert(`Added another ${size} ${product.name} to your cart!`);
         return prevCart.map((item) =>
-          item.id === product.id
+          item.id === product.id && item.size === size
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
-        return [...prevCart, { ...product, quantity: 1 }];
+        alert(`Added ${size} ${product.name} to your cart!`);
+        return [...prevCart, { ...product, size, quantity: 1 }];
       }
     });
   };
 
-  const handleUpdateQuantity = (productId, change) => {
+  const handleUpdateQuantity = (productId, size, change) => {
     setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === productId
-          ? { ...item, quantity: Math.max(1, item.quantity + change) }
-          : item
-      )
+      prevCart
+        .map((item) =>
+          item.id === productId && item.size === size
+            ? { ...item, quantity: Math.max(1, item.quantity + change) }
+            : item
+        )
+        .filter((item) => item.quantity > 0)
     );
   };
 
-  const handleRemoveFromCart = (productId) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+  const handleRemoveFromCart = (productId, size) => {
+    setCart((prevCart) =>
+      prevCart.filter((item) => !(item.id === productId && item.size === size))
+    );
   };
 
   const handleCompletePurchase = () => {
@@ -384,7 +469,10 @@ const App = () => {
     switch (currentPage) {
       case "home":
         return (
-          <HomePage onShopNowClick={() => handleNavigationClick("shop")} />
+          <HomePage
+            onShopNowClick={() => handleNavigationClick("shop")}
+            onOurStoryClick={() => handleNavigationClick("about")}
+          />
         );
       case "shop":
         return <ShopPage products={products} onAddToCart={handleAddToCart} />;
@@ -403,7 +491,10 @@ const App = () => {
         );
       default:
         return (
-          <HomePage onShopNowClick={() => handleNavigationClick("shop")} />
+          <HomePage
+            onShopNowClick={() => handleNavigationClick("shop")}
+            onOurStoryClick={() => handleNavigationClick("about")}
+          />
         );
     }
   };
