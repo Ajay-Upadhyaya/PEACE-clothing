@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import {
   ShoppingBag,
   Menu,
@@ -423,19 +426,25 @@ const App = () => {
   };
 
   const handleAddToCart = (product, size) => {
+    const toastId = `cart-add-${product.id}-${size}`;
     setCart((prevCart) => {
       const existingItem = prevCart.find(
         (item) => item.id === product.id && item.size === size
       );
       if (existingItem) {
-        alert(`Added another ${size} ${product.name} to your cart!`);
+        toast.success(
+          ` Another ${size} size ${product.name} is added to your cart!`,
+          { toastId: toastId }
+        );
         return prevCart.map((item) =>
           item.id === product.id && item.size === size
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
-        alert(`Added ${size} ${product.name} to your cart!`);
+        toast.success(` ${size} size ${product.name} is added to your cart!`, {
+          toastId: toastId,
+        });
         return [...prevCart, { ...product, size, quantity: 1 }];
       }
     });
@@ -501,6 +510,17 @@ const App = () => {
 
   return (
     <div className="font-sans text-gray-800 bg-gray-50 antialiased">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       {/* Navigation Bar */}
       <header className="sticky top-0 z-50 bg-white shadow-sm">
         <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
