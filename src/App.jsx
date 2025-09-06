@@ -691,7 +691,7 @@ const App = () => {
             </h4>
             <div className="flex justify-center md:justify-start space-x-4">
               <a
-                href="https://www.instagram.com/accounts/onetap/?next=%2F"
+                href="https://www.instagram.com/peaceclothing.np/"
                 target="_blank"
                 className="hover:text-gray-100 transition duration-300"
               >
